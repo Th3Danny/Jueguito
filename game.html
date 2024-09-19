@@ -1,32 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Juego de Carreras</title>
     <style>
-        #raceCanvas { border: 1px solid black; }
-        #startScreen { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
-        #startButton { font-size: 20px; padding: 10px 20px; }
-        #countdown { font-size: 50px; }
+        #raceCanvas {
+            border: 1px solid black;
+        }
+
+        #startScreen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        #startButton {
+            font-size: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        #countdown {
+            font-size: 50px;
+            margin-top: 20px;
+        }
     </style>
 </head>
+
 <body>
     <canvas id="raceCanvas" width="800" height="600"></canvas>
     <div id="startScreen">
         <button id="startButton">Start</button>
         <div id="countdown">5</div>
     </div>
-    <script src="player.js"></script>
-    <script src="car.js"></script>
-    <script src="game.js"></script>
-    <script>
-        if (window.Worker) {
-            const aiWorker = new Worker('aiWorker.js');
-            aiWorker.onmessage = function(e) {
-                aiCars = e.data.aiCars.map(car => new Car(car.x, car.y, car.speed));
-            };
-        }
-    </script>
+    <script type="module" src="./config/config.js"></script>
+    <script type="module"  src="./js/car.js"></script>
+    <script type="module" src="./js/player.js"></script>
+    <script type="module" src="./js/obstacles.js"></script>
+    <script type="module" src="./js/coins.js"></script>
+    <script type="module" src="./worker/collisionWorker.js"></script>
+    <script type="module" src="./worker/aiWorker.js"></script>
+    <script type="module" src="./js/game.js"></script>
 </body>
+
 </html>
