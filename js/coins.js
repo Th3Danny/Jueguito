@@ -20,38 +20,45 @@ export class Coin {
         const distance = Math.sqrt(distX * distX + distY * distY);
         return distance < this.radius + Math.min(car.width, car.height) / 2;
     }
+    
 }
+
+
 
 
 export function initializeCoins(canvas) {
-    coins = []; // Asegúrate de que coins sea un nuevo array
+    
+    coins = []; // Reinicia el array de monedas
     for (let i = 0; i < 5; i++) {
         const x = Math.random() * (canvas.width - 20) + 10;
         const y = Math.random() * (canvas.height - 20) + 10;
-        coins.push(new Coin(x, y));
+        coins.push(new Coin(x, y)); // Asegúrate de usar el constructor
     }
 }
 
-export function getCoins() {
-    return coins; // Agrega una función para obtener el array de monedas
+
+export function updateCoins(ctx, playerCar, coins, pointsWorker) {
+    // Recorre las monedas en sentido inverso para eliminar correctamente
+    for (let i = coins.length - 1; i >= 0; i--) {
+        const coin = coins[i];
+        // Verifica la colisión
+        if (coin.isCollectedBy(playerCar)) {
+            pointsWorker.postMessage({ action: 'addPoints', value: 2 });
+            coins.splice(i, 1);  // Elimina la moneda recogida
+            console.log("Moneda recogida! Puntos sumados.");
+        } else {
+            // Dibuja la moneda si no fue recogida
+            coin.draw(ctx);
+        }
+    }
 }
 
 
 
 
-// En coins.js
-export function updateCoins(ctx, playerCar, coins, points) {
-    coins.forEach((coin, index) => {
-        coin.draw(ctx);
-        if (coin.isCollectedBy(playerCar)) {
-            coins.splice(index, 1);
-            points += 10;
-            const newX = Math.random() * (ctx.canvas.width - 20) + 10;
-            const newY = Math.random() * (ctx.canvas.height - 20) + 10;
-            coins.push(new Coin(newX, newY));
-        }
-    });
-    return points; // Devuelve los puntos actualizados
+
+export function getCoins() {
+    return coins; // Agrega una función para obtener el array de monedas
 }
 
 
