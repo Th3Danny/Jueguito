@@ -8,7 +8,6 @@ const canvas = document.getElementById('raceCanvas');
 const ctx = canvas.getContext('2d');
 
 let playerCar;
-
 let startTime;
 let elapsedTime;
 let points = 0;
@@ -125,6 +124,12 @@ function drawObstacles() {
     });
 }
 
+document.getElementById('startButton').addEventListener('click', () => {
+    if (!countdownInterval) { // Solo iniciar si no hay un intervalo activo
+        countdown();
+    }
+});
+
 function countdown() {
     let timeLeft = 5;
     document.getElementById('countdown').textContent = timeLeft;
@@ -134,10 +139,12 @@ function countdown() {
         document.getElementById('countdown').textContent = timeLeft;
         if (timeLeft <= 0) {
             clearInterval(countdownInterval);
+            countdownInterval = null; // Reiniciar el intervalo
             startGame();
         }
     }, 1000);
 }
+
 
 function startGame() {
     if (gameOver) return; 
@@ -361,11 +368,6 @@ function checkCoinCollision(playerCar, coin) {
 }
 
 
-
-
-document.getElementById('startButton').addEventListener('click', () => {
-    countdown();
-});
 
 // Manejador de eventos para las teclas
 document.addEventListener('keydown', (event) => {
