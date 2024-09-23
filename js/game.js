@@ -125,7 +125,7 @@ function drawObstacles() {
 }
 
 document.getElementById('startButton').addEventListener('click', () => {
-    if (!countdownInterval) { // Solo iniciar si no hay un intervalo activo
+    if (!countdownInterval) { 
         countdown();
     }
 });
@@ -139,7 +139,7 @@ function countdown() {
         document.getElementById('countdown').textContent = timeLeft;
         if (timeLeft <= 0) {
             clearInterval(countdownInterval);
-            countdownInterval = null; // Reiniciar el intervalo
+            countdownInterval = null; 
             startGame();
         }
     }, 1000);
