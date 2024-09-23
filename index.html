@@ -6,7 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Juego de Carreras</title>
     <style>
-       
+       body{
+        display: flex;
+        justify-content: center;
+        align-items: center;
+       }
         #raceCanvas {
             border: 1px solid black;
         }
@@ -33,10 +37,9 @@
 </head>
 
 <body>
-    <div style="display: flex; justify-content: center; align-items: center; height: 95vh;">
-        <canvas id="raceCanvas" width="800" height="600"></canvas>
-    </div>
     
+        <canvas id="raceCanvas" width="800" height="600"></canvas>
+        
     <div id="startScreen">
         <button id="startButton">Start</button>
         <div id="countdown">5</div>
