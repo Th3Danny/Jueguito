@@ -1,5 +1,5 @@
 export const MAX_SPEED = 4;
-export const FINISH_LINE_Y = 50;
+export const FINISH_LINE_Y = 0;
 export const MAX_AI_CARS = 10;
 export const CAR_WIDTH = 30;
 export const CAR_HEIGHT = 50;

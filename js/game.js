@@ -9,19 +9,19 @@ const ctx = canvas.getContext('2d');
 
 let startTime;
 let elapsedTime;
-let points = 0; 
+let points = 0;
 let countdownInterval;
 let gameStarted = false;
 let gameOver = false;
 let coins = [];
-let displayedPoints = 0; 
+let displayedPoints = 0;
 let level = 1;
 let obstacles = [];
 let playerCar;
 let keys = {};
 let aiCars = [];
-
 let pointsWorker;
+let maxPoints = 0;
 let timeWorker = new Worker('./worker/timeWorker.js');
 
 if (window.Worker) {
@@ -31,18 +31,24 @@ if (window.Worker) {
         pointsWorker.onmessage = function (e) {
             if (e.data.action === 'updatePoints') {
                 points = e.data.points !== undefined ? e.data.points : points;
-                displayedPoints = points; // Actualiza la variable auxiliar
-                console.log(`Puntos actualizados: ${displayedPoints}`); 
-                updateHUD(); // Actualiza el HUD con los puntos
+                displayedPoints = points;
+                console.log(`Puntos actualizados: ${displayedPoints}`);
+                updateHUD();
             }
             if (e.data.action === 'levelUp') {
                 level = e.data.level;
                 console.log(`Nivel actualizado: ${level}`);
                 updateHUD();
             }
-        
-};
-        
+            if (e.data.action === 'loadPoints') {
+                points = e.data.points;
+                displayedPoints = points;
+                updateHUD();
+            }
+        };
+
+
+
     } catch (error) {
         console.error("Error al inicializar el worker:", error);
     }
@@ -59,15 +65,16 @@ timeWorker.onmessage = function (e) {
 
 // Actualiza el HUD (pantalla de información)
 function updateHUD() {
-    if (!gameStarted) return; 
-    
+    if (!gameStarted) return;
+
     ctx.fillStyle = "black";
     ctx.font = "20px Arial";
-    // Cambia las coordenadas para moverlo fuera de la carretera
     ctx.fillText(`Tiempo: ${elapsedTime}s`, 600, 30);
-    ctx.fillText(`Puntos: ${displayedPoints !== undefined ? displayedPoints : 0}`, 600, 60); 
+    ctx.fillText(`Puntos: ${displayedPoints}`, 600, 60);
     ctx.fillText(`Nivel: ${level}`, 600, 90);
+    ctx.fillText(`Máximo Puntos: ${maxPoints}`, 600, 120); // Muestra el máximo de puntos
 }
+
 
 
 
@@ -76,7 +83,7 @@ if (window.Worker) {
     collisionWorker = new Worker('./worker/collisionWorker.js');
     collisionWorker.onmessage = function (e) {
         const collisions = e.data;
-        
+
     };
 }
 
@@ -122,15 +129,15 @@ function countdown() {
         document.getElementById('countdown').textContent = timeLeft;
         if (timeLeft <= 0) {
             clearInterval(countdownInterval);
-            startGame();  
+            startGame();
         }
     }, 1000);
 }
 
 function startGame() {
     if (gameOver) return; // Evita iniciar si el juego está terminado
-    points = 0; 
-    level = 1; 
+    points = 0;
+    level = 1;
     startTimer();
     gameStarted = true;
     document.getElementById('startScreen').style.display = 'none';
@@ -141,13 +148,25 @@ function startGame() {
     updateAndDrawGameElements();
     updatePointsAndLevel();
 
-    initializeCoins(canvas); 
-    coins = getCoins(); 
+    pointsWorker.postMessage({ action: 'reset' }); // Reinicia el worker
+    // Carga los puntos máximos
+    loadMaxPoints();
+    initializeCoins(canvas, playerCar);
+    coins = getCoins();
     collectCoin();
     pointsWorker.postMessage({ action: 'reset' });
     timeWorker.postMessage('start');
     gameLoop();
+    pointsWorker.postMessage({ action: 'reset' });
 }
+
+function loadMaxPoints() {
+    const storedMaxPoints = localStorage.getItem('maxPoints');
+    maxPoints = storedMaxPoints ? parseInt(storedMaxPoints) : 0; // Asegúrate de que maxPoints se inicialice correctamente
+    pointsWorker.postMessage({ action: 'setMaxPoints', maxPoints }); // Envía el máximo al worker
+    updateHUD(); // Actualiza el HUD para mostrar el máximo
+}
+
 
 function startTimer() {
     startTime = Date.now();
@@ -174,11 +193,13 @@ function updatePointsAndLevel() {
 
 
 function updateAndDrawCoins() {
-    if (!gameStarted) return; // No dibujar monedas si el juego no ha empezado
-    // Si no quedan monedas, genera más
+    // No dibujar monedas si el juego no ha empezado
+    if (!gameStarted) return;
+
+    // Si no quedan monedas, generar más (esto sucede solo durante el juego)
     if (coins.length === 0) {
-        initializeCoins(canvas); // Genera nuevas monedas
-        coins = getCoins();      // Actualiza el array de monedas
+        initializeCoins(canvas, playerCar);
+        coins = getCoins();
         console.log("Nuevas monedas generadas!");
     }
 
@@ -193,15 +214,15 @@ function updateAndDrawCoins() {
 }
 
 
-
-
-
 // Función para recolectar monedas o puntos
 function collectCoin() {
-    pointsWorker.postMessage({ action: 'addPoints', value: 2 });
-    points += 0; // También actualiza localmente
-    displayedPoints = points; // Asegúrate de que se refleje en displayedPoints
-    updateHUD(); // Actualiza el HUD inmediatamente
+    const coinValue = 1; // Cambia a 1 para aumentar de uno en uno
+    pointsWorker.postMessage({ action: 'addPoints', value: coinValue });
+    points += 0;
+    displayedPoints = points;
+    
+    pointsWorker.postMessage({ action: 'checkMaxPoints' });
+    updateHUD();
 }
 
 
@@ -217,7 +238,9 @@ function updateAndDrawGameElements() {
 
 
 function gameLoop() {
-    
+
+    if (gameOver) return; // Detén el ciclo de juego si ha terminado
+
     ctx.clearRect(0, 0, canvas.width, canvas.height); // Limpiar el canvas
     updateAndDrawGameElements();
     updateAndDrawCoins();  // Asegúrate de que esto se llame aquí
@@ -225,17 +248,16 @@ function gameLoop() {
     updatePlayer();
     playerCar.draw(ctx);
 
-  
 
     obstacles.forEach(obstacle => {
-        
+
         if (checkCollision(playerCar, obstacle)) {
             endGame("¡Has perdido por chocar con un obstáculo!");
         }
     });
 
     coins.forEach((coin, index) => {
-        
+
         coin.draw(ctx);
         if (checkCoinCollision(playerCar, coin)) {
             collectCoin(); // Llama a collectCoin cuando recojas la moneda
@@ -243,57 +265,66 @@ function gameLoop() {
         }
     });
 
-    points = updateCoins(ctx, playerCar, getCoins(), points); // Actualizamos los puntos con las monedas
-
-     // Aquí se actualiza el HUD
-     updateHUD(); 
+    points = updateCoins(ctx, playerCar, getCoins(), points);
+    updateHUD();
 
     if (gameStarted) {
-        requestAnimationFrame(gameLoop);
+        requestAnimationFrame(gameLoop);  // Solo seguir si el juego está activo
     }
 }
 
 function endGame(message) {
     gameOver = true;
-    gameStarted = false; // Para asegurarnos de que no siga ejecutándose el bucle del juego
-    
-    // Limpia el canvas y el HUD
+    gameStarted = false;  // Asegúrate de que el bucle del juego se detenga
+
+    // Limpia el canvas completamente
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Opcional: Muestra un mensaje de fin de juego si lo deseas
+
+    // Muestra el mensaje de que el juego ha terminado
     console.log(message);
-    
-    // Vacía el array de monedas para que no se dibujen antes de empezar el nuevo juego
+
+    // Guarda el máximo de puntos si es mayor que el anterior
+    if (displayedPoints > maxPoints) {
+        maxPoints = displayedPoints;
+        localStorage.setItem('maxPoints', maxPoints); // Guarda en localStorage
+    }
+
+    // Vacía el array de monedas para que no se dibujen más
     coins = [];
-    
-    // Llama a resetGame para preparar el reinicio
+
+    // Reinicia el juego para empezar desde cero
     resetGame();
 }
 
 
+
 function resetGame() {
-    gameStarted = false; 
+    gameStarted = false;
     gameOver = false;
-    
-    // Reinicia todos los elementos del juego pero NO generes las monedas aún
-    points = 0;
-    level = 1;
-    
-    // Limpia el canvas (asegúrate de que no quede ningún dibujo)
+
+    // Reinicia todos los elementos del juego
+    points = 0; // Reinicia los puntos
+    level = 1; // Reinicia el nivel
+
+    // Limpia completamente el canvas para evitar cualquier rastro
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
+
     // Muestra la pantalla de inicio
     document.getElementById('startScreen').style.display = 'block';
-    
-    // Las monedas NO deben inicializarse hasta que el jugador presione "Start"
-}
 
+    // Vacía el array de monedas
+    coins = [];
+
+    // Reinicia la visualización de puntos y nivel en el HUD
+    displayedPoints = points;
+    updateHUD();
+}
 
 
 
 
 function drawTrack() {
-    const trackWidth = 400;
+    const trackWidth = 600;
     const trackLeft = (canvas.width - trackWidth) / 2;
     const trackRight = trackLeft + trackWidth;
 
