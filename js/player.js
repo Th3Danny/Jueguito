@@ -1,9 +1,9 @@
-import { Car, CAR_WIDTH, CAR_HEIGHT } from './car.js';
-import { FINISH_LINE_Y, MAX_SPEED } from '../config/config.js'; 
+import { Car } from './car.js';
+import { FINISH_LINE_Y, MAX_SPEED } from '../config/config.js';
 
 export class PlayerCar extends Car {
-    constructor(x, y, canvas) {
-        super(x, y);
+    constructor(x, y, canvas, imageSrc) {
+        super(x, y, 0, imageSrc); 
         this.canvas = canvas;
     }
 
@@ -14,11 +14,7 @@ export class PlayerCar extends Car {
         if (keys['ArrowRight']) this.x += MAX_SPEED;
 
         // Limitar el movimiento del coche dentro de los bordes del canvas
-        this.x = Math.max(50, Math.min(this.canvas.width - CAR_WIDTH - 50, this.x));
-        this.y = Math.max(FINISH_LINE_Y, Math.min(this.canvas.height - CAR_HEIGHT, this.y));
-    }
-
-    draw(ctx) {
-        super.draw(ctx, 'blue');
+        this.x = Math.max(50, Math.min(this.canvas.width - this.width - 50, this.x));
+        this.y = Math.max(FINISH_LINE_Y, Math.min(this.canvas.height - this.height, this.y));
     }
 }

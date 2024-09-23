@@ -3,7 +3,7 @@ export function startTimer() {
 }
 
 export function updateTimeAndPoints() {
-    elapsedTime = Math.floor((Date.now() - startTime) / 1000); // Tiempo en segundos
+    elapsedTime = Math.floor((Date.now() - startTime) / 1000);
     ctx.fillStyle = "black";
     ctx.font = "20px Arial";
     ctx.fillText(`Tiempo: ${elapsedTime} s`, 10, 20);

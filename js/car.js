@@ -1,20 +1,27 @@
-
-export const CAR_WIDTH = 30;
-export const CAR_HEIGHT = 50;
-
 export class Car {
-    constructor(x, y, speed) {
+    constructor(x, y, speed, imageSrc) {
         this.x = x;
         this.y = y;
         this.speed = speed;
-        this.width = CAR_WIDTH; 
-        this.height = CAR_HEIGHT; 
+
+        
+        this.carImage = new Image();
+this.carImage.src = imageSrc;
+
+
+      
+        this.width = 70;
+        this.height = 50; 
     }
 
-    draw(ctx) { 
-        ctx.fillStyle = "blue"; 
-        ctx.fillRect(this.x, this.y, this.width, this.height);
+    draw(ctx) {
+        
+        if (this.carImage.complete && this.carImage.naturalHeight !== 0) {
+            ctx.drawImage(this.carImage, this.x, this.y, this.width, this.height);
+        } else {
+            ctx.fillStyle = "blue";
+            ctx.fillRect(this.x, this.y, this.width, this.height);
+        }
+        
     }
 }
-
-

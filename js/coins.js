@@ -28,16 +28,16 @@ export class Coin {
 
 export function initializeCoins(canvas, playerCar) {
     coins = []; 
-    const trackWidth = 400; // Ancho de la pista
+    const trackWidth = 400; 
     const trackLeft = (canvas.width - trackWidth) / 2;
 
     // Define el rango vertical donde pueden aparecer las monedas
-    const minY = Math.max(playerCar.y - 500, 30); // Un poco arriba del coche
-    const maxY = Math.min(playerCar.y + 400, canvas.height - 50); // Un poco abajo del coche
+    const minY = Math.max(playerCar.y - 500, 30); 
+    const maxY = Math.min(playerCar.y + 400, canvas.height - 50); 
 
     for (let i = 0; i < 5; i++) {
-        const x = Math.random() * (trackWidth - 20) + trackLeft + 10; // Asegúrate de que caen dentro de la pista
-        const y = Math.random() * (maxY - minY) + minY; // Genera en el rango vertical definido
+        const x = Math.random() * (trackWidth - 20) + trackLeft + 10;
+        const y = Math.random() * (maxY - minY) + minY; 
         coins.push(new Coin(x, y)); 
     }
 }
@@ -46,16 +46,16 @@ export function initializeCoins(canvas, playerCar) {
 
 
 export function updateCoins(ctx, playerCar, coins, pointsWorker) {
-    // Recorre las monedas en sentido inverso para eliminar correctamente
+   
     for (let i = coins.length - 1; i >= 0; i--) {
         const coin = coins[i];
         // Verifica la colisión
         if (coin.isCollectedBy(playerCar)) {
             pointsWorker.postMessage({ action: 'addPoints', value: 2 });
-            coins.splice(i, 1);  // Elimina la moneda recogida
+            coins.splice(i, 1);  
             console.log("Moneda recogida! Puntos sumados.");
         } else {
-            // Dibuja la moneda si no fue recogida
+            
             coin.draw(ctx);
         }
     }
@@ -64,7 +64,7 @@ export function updateCoins(ctx, playerCar, coins, pointsWorker) {
 
 export function getCoins() {
     
-    return coins; // Agrega una función para obtener el array de monedas
+    return coins; 
 }
 
 

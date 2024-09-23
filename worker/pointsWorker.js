@@ -11,24 +11,24 @@ self.onmessage = function (e) {
             break;
 
         case 'reset':
-            workerPoints = 0; // Reinicia los puntos
-            level = 1; // Reinicia el nivel
+            workerPoints = 0; 
+            level = 1; 
             postMessage({ action: 'updatePoints', points: workerPoints });
             break;
 
         case 'savePoints':
-            postMessage({ action: 'pointsSaved', points: workerPoints }); // No se puede guardar en localStorage
+            postMessage({ action: 'pointsSaved', points: workerPoints }); 
             break;
 
         case 'setMaxPoints':
-            maxPoints = e.data.maxPoints; // Establece el máximo de puntos recibido
+            maxPoints = e.data.maxPoints; 
             break;
 
 
         case 'checkMaxPoints':
             if (workerPoints > maxPoints) {
                 maxPoints = workerPoints;
-                postMessage({ action: 'updateMaxPoints', maxPoints }); // Enviar el nuevo máximo al hilo principal
+                postMessage({ action: 'updateMaxPoints', maxPoints });
             }
             break;
     }
