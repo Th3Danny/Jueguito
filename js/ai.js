@@ -2,7 +2,7 @@ function initializeAICars() {
     aiCars = [];
     for (let i = 0; i < MAX_AI_CARS; i++) {
         const x = Math.random() * (canvas.width - CAR_WIDTH);
-        const speed = 1 + Math.random() * 2;
+        const speed = 3 + Math.random() * 3;
         aiCars.push(new Car(x, -CAR_HEIGHT, speed));
     }
 }

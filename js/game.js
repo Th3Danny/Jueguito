@@ -113,7 +113,8 @@ function initializeObstacles() {
     for (let i = 0; i < 5; i++) {
         const x = Math.random() * (canvas.width - 50);
         const y = Math.random() * -canvas.height;
-        obstacles.push(new MovingObstacle(x, y, 50, 50, 2, canvas));
+        obstacles.push(new MovingObstacle(x, y, 50, 50, 3, canvas)); 
+
     }
 }
 
