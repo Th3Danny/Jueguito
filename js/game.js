@@ -354,11 +354,15 @@ function drawTrack() {
 }
 
 function checkCollision(car1, car2) {
-    return car1.x < car2.x + car2.width &&
-        car1.x + car1.width > car2.x &&
-        car1.y < car2.y + car2.height &&
-        car1.y + car1.height > car2.y;
+    const distX = (car1.x + car1.width / 2) - (car2.x + car2.width / 2);
+    const distY = (car1.y + car1.height / 2) - (car2.y + car2.height / 2);
+    
+    const distance = Math.sqrt(distX * distX + distY * distY);
+    const collisionDistance = (Math.min(car1.width, car1.height) / 2) + (Math.min(car2.width, car2.height) / 2);
+    
+    return distance < collisionDistance;
 }
+
 
 function checkCoinCollision(playerCar, coin) {
     const distX = playerCar.x + playerCar.width / 2 - coin.x;
