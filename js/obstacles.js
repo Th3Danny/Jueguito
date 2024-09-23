@@ -1,4 +1,4 @@
-// obstacles.js
+
 export class MovingObstacle {
     constructor(x, y, width, height, speed, canvas) {
         this.x = x;
@@ -6,7 +6,7 @@ export class MovingObstacle {
         this.width = width;
         this.height = height;
         this.speed = speed;
-        this.canvas = canvas; // Guardar referencia al canvas
+        this.canvas = canvas; 
     }
 
     move() {

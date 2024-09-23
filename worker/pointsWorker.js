@@ -7,13 +7,18 @@ self.onmessage = function (e) {
             postMessage({ action: 'updatePoints', points: workerPoints });
             checkLevelUp();
             break;
-        // Otros casos...
+        
+        case 'reset':
+            workerPoints = 0; // Reinicia los puntos
+            level = 1; // Reinicia el nivel
+            postMessage({ action: 'updatePoints', points: workerPoints });
+            break;
     }
 };
 
 
 function checkLevelUp() {
-    if (workerPoints >= 10 * level) { // Asegúrate de tener acceso al nivel
+    if (workerPoints >= 10 * level) { 
         level++;
         postMessage({ action: 'levelUp', level });
     }

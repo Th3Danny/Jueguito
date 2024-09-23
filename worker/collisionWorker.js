@@ -1,4 +1,4 @@
-// collisionWorker.js
+
 onmessage = function (e) {
     const { playerCar, aiCars, obstacles, coins } = e.data;
 

@@ -7,12 +7,12 @@ export class Car {
         this.x = x;
         this.y = y;
         this.speed = speed;
-        this.width = CAR_WIDTH; // Asegúrate de que CAR_WIDTH esté definido
-        this.height = CAR_HEIGHT; // Asegúrate de que CAR_HEIGHT esté definido
+        this.width = CAR_WIDTH; 
+        this.height = CAR_HEIGHT; 
     }
 
-    draw(ctx) { // Asegúrate de que ctx sea pasado aquí
-        ctx.fillStyle = "blue"; // Cambia el color si lo necesitas
+    draw(ctx) { 
+        ctx.fillStyle = "blue"; 
         ctx.fillRect(this.x, this.y, this.width, this.height);
     }
 }

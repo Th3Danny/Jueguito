@@ -1,4 +1,4 @@
-let coins = []; // Declarar la variable coins
+let coins = []; 
 
 export class Coin {
     constructor(x, y) {
@@ -8,10 +8,12 @@ export class Coin {
     }
 
     draw(ctx) {
+        
         ctx.fillStyle = "yellow";
         ctx.beginPath();
         ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
         ctx.fill();
+        
     }
 
     isCollectedBy(car) {
@@ -25,16 +27,18 @@ export class Coin {
 
 
 
-
 export function initializeCoins(canvas) {
-    
-    coins = []; // Reinicia el array de monedas
+    coins = []; 
+    const trackWidth = 400; // Ancho de la pista
+    const trackLeft = (canvas.width - trackWidth) / 2;
+
     for (let i = 0; i < 5; i++) {
-        const x = Math.random() * (canvas.width - 20) + 10;
+        const x = Math.random() * (trackWidth - 20) + trackLeft + 10; // Asegúrate de que caen dentro de la pista
         const y = Math.random() * (canvas.height - 20) + 10;
-        coins.push(new Coin(x, y)); // Asegúrate de usar el constructor
+        coins.push(new Coin(x, y)); 
     }
 }
+
 
 
 export function updateCoins(ctx, playerCar, coins, pointsWorker) {
@@ -58,6 +62,7 @@ export function updateCoins(ctx, playerCar, coins, pointsWorker) {
 
 
 export function getCoins() {
+    
     return coins; // Agrega una función para obtener el array de monedas
 }
 
