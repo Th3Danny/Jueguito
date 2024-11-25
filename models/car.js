@@ -1,5 +1,5 @@
 export class Car {
-    constructor(x, y, speed, imageSrc = './imgs/car.png') {
+    constructor(x, y, speed, imageSrc) {
         this.x = x;
         this.y = y;
         this.speed = speed;
@@ -10,11 +10,13 @@ export class Car {
     }
 
     draw(ctx) {
+
         if (this.carImage.complete && this.carImage.naturalHeight !== 0) {
             ctx.drawImage(this.carImage, this.x, this.y, this.width, this.height);
         } else {
             ctx.fillStyle = "blue";
             ctx.fillRect(this.x, this.y, this.width, this.height);
         }
+
     }
 }

@@ -1,9 +1,6 @@
 let startTime = 0; 
 let timerInterval = null; 
-
-
  //Inicia el temporizador.
- 
 export function startTimer() {
     if (timerInterval) {
         clearInterval(timerInterval); 
@@ -14,10 +11,7 @@ export function startTimer() {
         
     }, 1000); 
 }
-
-
 //Detiene el temporizador.
- 
 export function stopTimer() {
     if (timerInterval) {
         clearInterval(timerInterval); 

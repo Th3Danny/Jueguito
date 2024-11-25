@@ -7,22 +7,19 @@ export function updateHUD(ctx, elapsedTime, points, level, maxPoints) {
     ctx.fillText(`Máximo Puntos: ${maxPoints}`, 600, 120);
 }
 
-
-
 export function drawTrack(ctx, canvas) {
-    // Fondo gris para la pista
     ctx.fillStyle = "gray";
-    ctx.fillRect(100, 0, 600, canvas.height); // Dibuja la pista
+    ctx.fillRect(100, 0, 600, canvas.height); 
 
-    // Líneas blancas en los bordes de la pista
+   
     ctx.fillStyle = "white";
     for (let i = 0; i < canvas.height; i += 40) {
-        ctx.fillRect(100, i, 10, 30); // Línea izquierda
-        ctx.fillRect(690, i, 10, 30); // Línea derecha
+        ctx.fillRect(100, i, 10, 30); 
+        ctx.fillRect(690, i, 10, 30); 
     }
 
-    // Bordes verdes para el césped
+    
     ctx.fillStyle = "green";
-    ctx.fillRect(0, 0, 100, canvas.height); // Césped izquierdo
-    ctx.fillRect(700, 0, canvas.width - 700, canvas.height); // Césped derecho
+    ctx.fillRect(0, 0, 100, canvas.height); 
+    ctx.fillRect(700, 0, canvas.width - 700, canvas.height); 
 }

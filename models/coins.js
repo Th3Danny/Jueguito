@@ -1,4 +1,4 @@
-import { checkCoinCollision } from './collision.js';
+import { checkCoinCollision } from '../controllers/collision.js';
 import { TRACK_LEFT,TRACK_WIDTH  } from '../config/config.js';
 
 export class Coin {
@@ -26,9 +26,6 @@ export function initializeCoins(canvas) {
     return coins;
 }
 
-
-
-
 export function updateCoins(ctx, coins, playerCar, onCoinCollected) {
     coins.forEach((coin, index) => {
         if (checkCoinCollision(playerCar, coin)) { 
@@ -39,8 +36,3 @@ export function updateCoins(ctx, coins, playerCar, onCoinCollected) {
         }
     });
 }
-
-
-
-
-

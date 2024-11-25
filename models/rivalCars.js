@@ -1,5 +1,5 @@
 import { Car } from './car.js';
-import { checkCollision } from './collision.js';
+import { checkCollision } from '../controllers/collision.js';
 import { TRACK_LEFT, TRACK_WIDTH } from '../config/config.js';
 
 export function initializeRivalCars(canvas, maxCars = 5) {

@@ -1,7 +1,7 @@
-import { PlayerCar } from './player.js';
-import { initializeRivalCars, updateRivalCars } from './rivalCars.js';
-import { initializeCoins, updateCoins } from './coins.js';
-import { updateHUD, drawTrack } from './ui.js';
+import { PlayerCar } from '../models/player.js';
+import { initializeRivalCars, updateRivalCars } from '../models/rivalCars.js';
+import { initializeCoins, updateCoins } from '../models/coins.js';
+import { updateHUD, drawTrack } from '../views/ui.js';
 import { startTimer} from './timer.js';
 
 // Inicializa los Workers
@@ -36,6 +36,29 @@ document.addEventListener('keydown', (event) => {
 document.addEventListener('keyup', (event) => {
     keys[event.key] = false;
 });
+
+document.getElementById('startButton').addEventListener('click', () => {
+    if (!gameStarted) {
+        gameStarted = true;
+        const startScreen = document.getElementById('startScreen');
+        const countdownElement = document.getElementById('countdown');
+
+        let countdown = 3; // Valor inicial del conteo
+        countdownElement.textContent = countdown; // Muestra el número inicial
+
+        const countdownInterval = setInterval(() => {
+            countdown--;
+            countdownElement.textContent = countdown; // Actualiza el número en pantalla
+
+            if (countdown <= 0) {
+                clearInterval(countdownInterval); // Detiene el conteo cuando llega a 0
+                startScreen.style.display = 'none'; // Oculta la pantalla de inicio
+                initializeGame(); // Inicia el juego
+            }
+        }, 1000); // Intervalo de 1 segundo
+    }
+});
+
 
 // Listeners de los Workers
 collisionWorker.onmessage = function (e) {
@@ -100,8 +123,6 @@ timeWorker.onmessage = function (e) {
     }
 };
 
-
-
 // Inicialización del juego
 function initializeGame() {
     points = 0;
@@ -139,7 +160,6 @@ function sendCollisionData() {
         }))
     });
 }
-
 
 
 // Llama a esta función dentro del bucle principal
@@ -236,10 +256,4 @@ function resetGame() {
     gameLoop(); 
 }
 
-document.getElementById('startButton').addEventListener('click', () => {
-    if (!gameStarted) {
-        gameStarted = true;
-        document.getElementById('startScreen').style.display = 'none';
-        initializeGame();
-    }
-});
+

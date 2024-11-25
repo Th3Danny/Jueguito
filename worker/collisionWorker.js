@@ -1,4 +1,4 @@
-import { checkCollision, checkCoinCollision } from '../js/collision.js';
+import { checkCollision, checkCoinCollision } from '../controllers/collision.js';
 
 onmessage = function (e) {
     // console.log('Mensaje recibido en collisionWorker:', e.data); 
