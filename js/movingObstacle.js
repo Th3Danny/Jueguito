@@ -1,4 +1,3 @@
-
 export class MovingObstacle {
     constructor(x, y, width, height, speed, canvas) {
         this.x = x;
@@ -6,13 +5,13 @@ export class MovingObstacle {
         this.width = width;
         this.height = height;
         this.speed = speed;
-        this.canvas = canvas; 
+        this.canvas = canvas;
     }
 
     move() {
         this.y += this.speed;
         if (this.y > this.canvas.height) {
-            this.y = -this.height;
+            this.y = -this.height; // Reinicia la posición arriba del canvas
             this.x = Math.random() * (this.canvas.width - this.width);
         }
     }

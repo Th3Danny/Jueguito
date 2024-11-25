@@ -1,42 +1,44 @@
-let workerPoints = 0;
-let level = 1;
+let points = 0;
 let maxPoints = 0;
+let level = 1;
 
-self.onmessage = function (e) {
+onmessage = function (e) {
     switch (e.data.action) {
         case 'addPoints':
-            workerPoints += e.data.value;
-            postMessage({ action: 'updatePoints', points: workerPoints });
+            points += e.data.value;
+            postMessage({ action: 'updatePoints', points });
+
+            if (points > maxPoints) {
+                maxPoints = points;
+                postMessage({ action: 'updateMaxPoints', maxPoints });
+            }
             checkLevelUp();
             break;
 
         case 'reset':
-            workerPoints = 0; 
+            points = 0; 
             level = 1; 
-            postMessage({ action: 'updatePoints', points: workerPoints });
-            break;
-
-        case 'savePoints':
-            postMessage({ action: 'pointsSaved', points: workerPoints }); 
+            postMessage({ action: 'updatePoints', points });
             break;
 
         case 'setMaxPoints':
-            maxPoints = e.data.maxPoints; 
-            break;
-
-
-        case 'checkMaxPoints':
-            if (workerPoints > maxPoints) {
-                maxPoints = workerPoints;
-                postMessage({ action: 'updateMaxPoints', maxPoints });
-            }
+            maxPoints = e.data.maxPoints;
             break;
     }
 };
 
+function checkMaxPoints() {
+    if (points > maxPoints) {
+        maxPoints = points;
+        console.log(`Nuevo puntaje máximo alcanzado: ${maxPoints}`); // Depuración
+        postMessage({ action: 'updateMaxPoints', maxPoints }); // Enviar al hilo principal
+    }
+}
+
 function checkLevelUp() {
-    if (workerPoints >= 10 * level) {
+    if (points >= 2 * level) { // Cada 10 puntos sube un nivel
         level++;
+        console.log(`Subiste al nivel: ${level}`); // Depuración
         postMessage({ action: 'levelUp', level });
     }
 }

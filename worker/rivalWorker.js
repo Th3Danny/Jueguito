@@ -1,7 +1,7 @@
-onmessage = function(e) {
+onmessage = function (e) {
     const { aiCars, canvasWidth, canvasHeight, carWidth, carHeight } = e.data;
 
-    aiCars.forEach(car => {
+    aiCars.forEach((car) => {
         car.y += car.speed;
         if (car.y > canvasHeight) {
             car.y = -carHeight;
@@ -9,5 +9,5 @@ onmessage = function(e) {
         }
     });
 
-    postMessage({ aiCars });
+    postMessage({ action: 'updateRivals', aiCars });
 };
