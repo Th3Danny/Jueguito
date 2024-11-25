@@ -30,15 +30,15 @@ onmessage = function (e) {
 function checkMaxPoints() {
     if (points > maxPoints) {
         maxPoints = points;
-        console.log(`Nuevo puntaje máximo alcanzado: ${maxPoints}`); // Depuración
-        postMessage({ action: 'updateMaxPoints', maxPoints }); // Enviar al hilo principal
+        console.log(`Nuevo puntaje máximo alcanzado: ${maxPoints}`); 
+        postMessage({ action: 'updateMaxPoints', maxPoints }); 
     }
 }
 
 function checkLevelUp() {
-    if (points >= 2 * level) { // Cada 10 puntos sube un nivel
+    if (points >= 2 * level) {
         level++;
-        console.log(`Subiste al nivel: ${level}`); // Depuración
+        console.log(`Subiste al nivel: ${level}`); 
         postMessage({ action: 'levelUp', level });
     }
 }

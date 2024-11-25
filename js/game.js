@@ -2,20 +2,20 @@ import { PlayerCar } from './player.js';
 import { initializeRivalCars, updateRivalCars } from './rivalCars.js';
 import { initializeCoins, updateCoins } from './coins.js';
 import { updateHUD, drawTrack } from './ui.js';
-import { startTimer, stopTimer } from './timer.js';
+import { startTimer} from './timer.js';
 
 // Inicializa los Workers
 const collisionWorker = new Worker('./worker/collisionWorker.js', { type: 'module' });
 const pointsWorker = new Worker('./worker/pointsWorker.js', { type: 'module' });
 const rivalWorker = new Worker('./worker/rivalWorker.js');
 const timeWorker = new Worker('./worker/timeWorker.js');
-let maxPoints = parseInt(localStorage.getItem('maxPoints')) || 0; // Recuperar `maxPoints` del localStorage
+let maxPoints = parseInt(localStorage.getItem('maxPoints')) || 0; 
 pointsWorker.postMessage({ action: 'setMaxPoints', maxPoints }); 
 
-// Variables globales del juego
-let playerCar, rivalCars, obstacles, coins, points, level, elapsedTime;
+
+let playerCar, rivalCars, coins, points, level, elapsedTime;
 let gameStarted = false, gameOver = false;
-let animationId; // Identificador de la animación
+let animationId; 
 
 
 // Canvas y contexto
@@ -43,45 +43,47 @@ collisionWorker.onmessage = function (e) {
 
     switch (e.data.action) {
         case 'aiCarCollision':
-            console.log('Colisión con auto rival detectada');
+            console.log('Colisión con un auto rival detectada');
             endGame("¡Chocaste con un auto rival!");
             break;
 
         case 'coinCollected':
-            console.log(`Colisión con moneda detectada, índice: ${e.data.coinIndex}`);
+            console.log(`Moneda recogida, índice: ${e.data.coinIndex}`);
             pointsWorker.postMessage({ action: 'addPoints', value: 1 });
             coins.splice(e.data.coinIndex, 1); // Elimina la moneda recogida
             break;
+
+        default:
+            console.log('Acción desconocida recibida del Worker:', e.data.action);
     }
 };
 
+
 pointsWorker.onmessage = function (e) {
-    console.log('Mensaje recibido del Worker:', e.data); // Depuración
+    console.log('Mensaje recibido del Worker:', e.data); 
 
     switch (e.data.action) {
         case 'updatePoints':
             points = e.data.points;
-            console.log(`Puntos actualizados: ${points}`); // Depuración
+            console.log(`Puntos actualizados: ${points}`); 
             updateHUD(ctx, elapsedTime, points, level, maxPoints);
             break;
 
         case 'updateMaxPoints':
             maxPoints = e.data.maxPoints;
-            console.log(`Nuevo puntaje máximo: ${maxPoints}`); // Depuración
-            localStorage.setItem('maxPoints', maxPoints); // Guarda el puntaje máximo en el almacenamiento local
+            console.log(`Nuevo puntaje máximo: ${maxPoints}`); 
+            localStorage.setItem('maxPoints', maxPoints); 
             updateHUD(ctx, elapsedTime, points, level, maxPoints);
             break;
 
         case 'levelUp':
             level = e.data.level;
-            console.log(`Nuevo nivel alcanzado: ${level}`); // Depuración
+            console.log(`Nuevo nivel alcanzado: ${level}`); 
             updateHUD(ctx, elapsedTime, points, level, maxPoints);
             break;
     }
 };
 
-
-// Listener del rivalWorker
 rivalWorker.onmessage = function (e) {
     console.log('Mensaje recibido del Worker:', e.data);
 
@@ -110,36 +112,34 @@ function initializeGame() {
     rivalCars = initializeRivalCars(canvas);
     coins = initializeCoins(canvas);
 
-    timeWorker.postMessage('start'); // Inicia el temporizador
-    startTimer(); // Inicia el temporizador local
-    gameLoop(); // Inicia el bucle del juego
+    timeWorker.postMessage('start'); 
+    startTimer(); 
+    gameLoop(); 
 }
 
 
-// function sendCollisionData() {
-//     const data = {
-//         playerCar: {
-//             x: playerCar.x,
-//             y: playerCar.y,
-//             width: playerCar.width,
-//             height: playerCar.height,
-//         },
-//         aiCars: rivalCars.map(car => ({
-//             x: car.x,
-//             y: car.y,
-//             width: car.width,
-//             height: car.height,
-//         })),
-//         coins: coins.map(coin => ({
-//             x: coin.x,
-//             y: coin.y,
-//             radius: coin.radius,
-//         })),
-//     };
+function sendCollisionData() {
+    collisionWorker.postMessage({
+        playerCar: {
+            x: playerCar.x,
+            y: playerCar.y,
+            width: playerCar.width,
+            height: playerCar.height
+        },
+        aiCars: rivalCars.map(car => ({
+            x: car.x,
+            y: car.y,
+            width: car.width,
+            height: car.height
+        })),
+        coins: coins.map(coin => ({
+            x: coin.x,
+            y: coin.y,
+            radius: coin.radius
+        }))
+    });
+}
 
-//     console.log('Enviando datos al collisionWorker:', data); // Depuración
-//     collisionWorker.postMessage(data);
-// }
 
 
 // Llama a esta función dentro del bucle principal
@@ -159,27 +159,27 @@ function gameLoop() {
         pointsWorker.postMessage({ action: 'addPoints', value: coinValue });
     });
 
-    if (coins.length === 0) { // Si no hay monedas, genera nuevas
+    if (coins.length === 0) { 
         coins.push(...initializeCoins(canvas));
     }
 
     playerCar.update(keys);
     playerCar.draw(ctx);
-
+    
     updateHUD(ctx, elapsedTime, points, level, maxPoints);
+
+     // Enviar datos al collisionWorker
+    sendCollisionData();
 
     animationId = requestAnimationFrame(gameLoop);
 }
-
-
-
 
 function endGame(message) {
     gameOver = true;
 
     // Detén la animación y el temporizador
     if (animationId) cancelAnimationFrame(animationId);
-    timeWorker.postMessage('stop'); // Detiene el temporizador en el Worker
+    timeWorker.postMessage('stop'); 
 
     // Limpia el canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -192,7 +192,7 @@ function endGame(message) {
     ctx.font = "20px Arial";
     ctx.fillText(message, canvas.width / 2, canvas.height / 2 + 20);
 
-    // Muestra el botón de reinicio
+   
     const restartButton = document.createElement("button");
     restartButton.innerText = "Reiniciar";
     restartButton.style.position = "absolute";
@@ -209,16 +209,15 @@ function endGame(message) {
 function resetGame() {
     gameOver = false;
     gameStarted = false;
-    points = 0; // Reinicia los puntos
-    level = 1; // Reinicia el nivel
-    elapsedTime = 0; // Reinicia el tiempo local
+    points = 0; 
+    level = 1; 
+    elapsedTime = 0; 
 
     // Limpia el estado de las teclas
     for (const key in keys) {
         keys[key] = false;
     }
 
-    // Detén el temporizador previo
     timeWorker.postMessage('stop');
 
     // Reinicia los puntos en el Worker
@@ -234,13 +233,9 @@ function resetGame() {
 
     // Inicia el temporizador nuevamente
     timeWorker.postMessage('start');
-    gameLoop(); // Reinicia la animación
+    gameLoop(); 
 }
 
-
-
-
-// Inicia el juego al presionar el botón de inicio
 document.getElementById('startButton').addEventListener('click', () => {
     if (!gameStarted) {
         gameStarted = true;

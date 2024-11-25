@@ -11,7 +11,7 @@ export class MovingObstacle {
     move() {
         this.y += this.speed;
         if (this.y > this.canvas.height) {
-            this.y = -this.height; // Reinicia la posición arriba del canvas
+            this.y = -this.height; 
             this.x = Math.random() * (this.canvas.width - this.width);
         }
     }

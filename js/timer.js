@@ -1,32 +1,32 @@
-let startTime = 0; // Marca el inicio del temporizador
-let timerInterval = null; // Intervalo del temporizador
+let startTime = 0; 
+let timerInterval = null; 
 
-/**
- * Inicia el temporizador.
- */
+
+ //Inicia el temporizador.
+ 
 export function startTimer() {
     if (timerInterval) {
-        clearInterval(timerInterval); // Detén cualquier temporizador previo
+        clearInterval(timerInterval); 
     }
 
-    startTime = Date.now(); // Establece el tiempo inicial
+    startTime = Date.now(); 
     timerInterval = setInterval(() => {
-        console.log(`Tiempo transcurrido: ${updateTime()} segundos`);
-    }, 1000); // Actualiza cada segundo (solo para pruebas locales)
+        
+    }, 1000); 
 }
 
-/**
- * Detiene el temporizador.
- */
+
+//Detiene el temporizador.
+ 
 export function stopTimer() {
     if (timerInterval) {
-        clearInterval(timerInterval); // Detén el temporizador
-        timerInterval = null; // Limpia la referencia al intervalo
+        clearInterval(timerInterval); 
+        timerInterval = null; 
     }
 }
 
 /**
- * Devuelve el tiempo transcurrido desde que se inició el temporizador.
+ * 
  * @returns {number} Tiempo transcurrido en segundos.
  */
 export function updateTime() {
@@ -34,16 +34,16 @@ export function updateTime() {
         console.warn("El temporizador no ha sido iniciado.");
         return 0;
     }
-    return Math.floor((Date.now() - startTime) / 1000); // Devuelve el tiempo en segundos
+    return Math.floor((Date.now() - startTime) / 1000);
 }
 
 /**
  * Renderiza el tiempo transcurrido y los puntos en el canvas.
- * @param {CanvasRenderingContext2D} ctx - Contexto del canvas para dibujar.
- * @param {number} points - Puntos actuales del jugador.
+ * @param {CanvasRenderingContext2D} ctx 
+ * @param {number} points 
  */
 export function updateTimeAndPoints(ctx, points) {
-    const elapsedTime = updateTime(); // Usar `updateTime` para obtener el tiempo
+    const elapsedTime = updateTime(); 
     ctx.fillStyle = "black";
     ctx.font = "20px Arial";
     ctx.fillText(`Tiempo: ${elapsedTime} s`, 10, 20);

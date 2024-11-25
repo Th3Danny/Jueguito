@@ -23,16 +23,15 @@ export class PlayerCar extends Car {
     }
 
     limitMovement() {
-        // Limitar la posición horizontal a los bordes de la carretera (área gris)
+        
         this.x = Math.max(TRACK_LEFT, Math.min(TRACK_LEFT + TRACK_WIDTH - this.width, this.x));
-    
-        // Limitar la posición vertical dentro del canvas
+
         this.y = Math.max(FINISH_LINE_Y, Math.min(this.canvas.height - this.height, this.y));
     }
     
     
     resetPosition() {
-        this.x = this.canvas.width / 2 - this.width / 2; // Centra el coche horizontalmente
-        this.y = this.canvas.height - this.height - 50; // Coloca al jugador en la parte inferior
+        this.x = this.canvas.width / 2 - this.width / 2; 
+        this.y = this.canvas.height - this.height - 50; 
     }
 }
